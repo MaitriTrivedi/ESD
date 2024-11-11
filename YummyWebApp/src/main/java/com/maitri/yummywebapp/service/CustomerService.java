@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.maitri.yummywebapp.helper.EncryptionService;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
@@ -24,12 +25,14 @@ public class CustomerService {
     // To convert dto to entity
     private final CustomerMapper mapper;
 
+    private final EncryptionService encryptionService;
+
     public Customer createCustomer(CustomerRequest request) {
         System.out.println("==================== create service");
 
         // This will convert our dto to entity using Mapper
         Customer customer = mapper.toEntity(request);
-
+        customer.setPassword(encryptionService.encode(customer.getPassword()));
         // Stores entity into database using Repo
         repo.save(customer);
         return customer;

@@ -9,6 +9,8 @@ import com.maitri.yummywebapp.mapper.LoginMapper;
 import com.maitri.yummywebapp.repo.CustomerRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.maitri.yummywebapp.helper.EncryptionService;
+import com.maitri.yummywebapp.helper.JWTHelper;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,8 @@ public class LoginService {
 
     private final CustomerRepo repo;
     private final LoginMapper mapper;
+    private final EncryptionService encryptionService;
+    private final JWTHelper jwtHelper;
 
     public String loginUser(LoginRequest request) {
         Customer customer = mapper.toEntity(request);
@@ -24,10 +28,11 @@ public class LoginService {
 
         if (existingCustomer.isPresent()) {
             // Check if the password matches
-            if (existingCustomer.get().getPassword().equals(customer.getPassword())) {
-                return "Login successful";
-            } else {
-                return "Invalid password";
+            if(!encryptionService.validates(request.password(), existingCustomer.get().getPassword())) {
+                return "Wrong Password or Email";
+            }
+            else {
+                return jwtHelper.generateToken(request.email());
             }
         } else {
             return "User not found";
