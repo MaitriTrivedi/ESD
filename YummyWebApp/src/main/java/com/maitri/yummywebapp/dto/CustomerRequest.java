@@ -2,6 +2,7 @@ package com.maitri.yummywebapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
+import lombok.Data;
 
 public record CustomerRequest(
         @NotNull(message = "Customer should be present")

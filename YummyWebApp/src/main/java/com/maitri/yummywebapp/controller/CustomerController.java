@@ -1,6 +1,7 @@
 package com.maitri.yummywebapp.controller;
 
 import com.maitri.yummywebapp.dto.CustomerRequest;
+import com.maitri.yummywebapp.dto.CustomerUpdateRequest;
 import com.maitri.yummywebapp.service.CustomerService;
 import com.maitri.yummywebapp.entity.Customer;
 import jakarta.validation.Valid;
@@ -8,10 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,5 +35,10 @@ public class CustomerController {
          */
         System.out.println("==================== create controller");
         return ResponseEntity.ok(customerService.createCustomer(request));
+    }
+    @PutMapping("/update") // for post request
+    public ResponseEntity<Customer> updateCustomer(@RequestBody @Valid CustomerUpdateRequest request) {
+        System.out.println("==================== update controller");
+        return ResponseEntity.ok(customerService.updateCustomer(request));
     }
 }

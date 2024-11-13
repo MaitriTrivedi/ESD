@@ -14,6 +14,7 @@ public class RequestInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authorizationHeader = request.getHeader("Authorization");
+        System.out.println("==== INSIDE INCEPTOR ====");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
