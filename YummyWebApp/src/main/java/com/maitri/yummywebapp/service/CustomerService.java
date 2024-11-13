@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.lang.reflect.Field;
 import com.maitri.yummywebapp.dto.CustomerUpdateRequest;
 import com.maitri.yummywebapp.dto.CustomerRequest;
+import com.maitri.yummywebapp.dto.CustomerDeleteRequest;
 import com.maitri.yummywebapp.dto.CustomerResponse;
 import com.maitri.yummywebapp.entity.Customer;
 import com.maitri.yummywebapp.mapper.CustomerMapper;
 import com.maitri.yummywebapp.mapper.CustomerUpdateMapper;
+import com.maitri.yummywebapp.mapper.CustomerDeleteMapper;
 import com.maitri.yummywebapp.repo.CustomerUpdateRepo;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ public class CustomerService {
     // To convert dto to entity
     private final CustomerUpdateMapper updateMapper;
     private final CustomerMapper createMapper;
+    private final CustomerDeleteMapper deleteMapper;
 
     private final EncryptionService encryptionService;
 
@@ -38,6 +41,25 @@ public class CustomerService {
         customer.setPassword(encryptionService.encode(customer.getPassword()));
         // Stores entity into database using Repo
         repo.save(customer);
+        return customer;
+    }
+
+    public Customer deleteCustomer(CustomerDeleteRequest request) {
+        System.out.println("==================== delete service");
+
+        Optional<Customer> existingCustomerOpt = repo.findByEmail(request.getEmail());
+
+        if (existingCustomerOpt.isEmpty()) {
+            throw new RuntimeException("Customer not found with email: " + request.getEmail());
+        }
+
+        Customer existingCustomer = existingCustomerOpt.get();
+
+        // Convert the DTO to an entity using Mapper
+        Customer customer = deleteMapper.toEntity(request);
+
+        // deletes entity into database using Repo
+        repo.delete(existingCustomer);
         return customer;
     }
 

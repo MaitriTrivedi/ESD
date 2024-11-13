@@ -10,7 +10,6 @@ public class CustomerUpdateMapper {
         return Customer.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .build();

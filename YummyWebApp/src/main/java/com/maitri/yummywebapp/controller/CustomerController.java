@@ -2,6 +2,7 @@ package com.maitri.yummywebapp.controller;
 
 import com.maitri.yummywebapp.dto.CustomerRequest;
 import com.maitri.yummywebapp.dto.CustomerUpdateRequest;
+import com.maitri.yummywebapp.dto.CustomerDeleteRequest;
 import com.maitri.yummywebapp.service.CustomerService;
 import com.maitri.yummywebapp.entity.Customer;
 import jakarta.validation.Valid;
@@ -41,4 +42,11 @@ public class CustomerController {
         System.out.println("==================== update controller");
         return ResponseEntity.ok(customerService.updateCustomer(request));
     }
+
+    @DeleteMapping("/remove_account") // for post request
+    public ResponseEntity<Customer> deleteCustomer(@RequestBody @Valid CustomerDeleteRequest request) {
+        System.out.println("==================== delete controller");
+        return ResponseEntity.ok(customerService.deleteCustomer(request));
+    }
+
 }
