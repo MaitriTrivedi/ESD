@@ -20,7 +20,7 @@ public class CustomerController {
     // final : it will create only one object in whole project container, when we run the project
     private final CustomerService customerService;
 
-    @PostMapping // for post request
+    @PostMapping("/create_account") // for post request
     public ResponseEntity<Customer> createCustomer(@RequestBody @Valid CustomerRequest request) {
         /*
         @Valid :
