@@ -8,6 +8,7 @@ import com.maitri.yummywebapp.helper.EncryptionService;
 import com.maitri.yummywebapp.mapper.ProductsMapper;
 import com.maitri.yummywebapp.repo.ProductsRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,8 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductsService {
 
-    // To store entity into sql database
-    private final ProductsRepo repo;
+//    // To store entity into sql database
+//    private final ProductsRepo repo;
+
+    @Autowired
+    ProductsRepo repo;
 
     // To convert dto to entity
     private final ProductsMapper mapper;
@@ -33,11 +37,14 @@ public class ProductsService {
 
     public Products getProductById(Long id) {
         System.out.println("==================== getProductById service");
-        return repo.findById(id).orElse(null); // Returns the product or null if not found
+        // return repo.findById(id).orElse(null); // Returns the product or null if not found
+        System.out.println("==================== JPA REPO getProductById service");
+        return repo.findById(id).orElse(null);
     }
 
     public List<Products> getAllProducts() {
         System.out.println("==================== getAllProducts service");
-        return repo.findAll(); // Returns all products
+        // return repo.findAll(); // Returns all products
+        return repo.findAll();
     }
 }
