@@ -5,6 +5,7 @@ import com.maitri.yummywebapp.entity.Products;
 import com.maitri.yummywebapp.service.ProductsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,5 +44,10 @@ public class ProductsController {
             List<Products> allProducts = productsService.getAllProducts();
             return ResponseEntity.ok(allProducts);
         }
+    }
+
+    @GetMapping({"/get_top_2"})
+    public List<Products> getTop2Products(@RequestParam double minPrice, @RequestParam double maxPrice) {
+        return productsService.getTop2ProductsInPriceRange(minPrice, maxPrice);
     }
 }

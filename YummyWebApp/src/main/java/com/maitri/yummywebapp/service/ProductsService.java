@@ -47,4 +47,8 @@ public class ProductsService {
         // return repo.findAll(); // Returns all products
         return repo.findAll();
     }
+
+    public List<Products> getTop2ProductsInPriceRange(double minPrice, double maxPrice) {
+        return repo.findTop2ProductsInPriceRange(minPrice, maxPrice);
+    }
 }

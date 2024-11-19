@@ -1,12 +1,16 @@
 package com.maitri.yummywebapp.repo;
 
+import org.springframework.data.jpa.repository.Query;
 import com.maitri.yummywebapp.entity.Products;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import java.util.Optional;
 
 @Repository
 public interface ProductsRepo extends JpaRepository<Products, Long> {
-//    Optional<Products> findById(Long  id);
+    @Query("SELECT p FROM Products p WHERE p.price BETWEEN :minPrice AND :maxPrice ORDER BY p.price ASC")
+    List<Products> findTop2ProductsInPriceRange(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
 }
