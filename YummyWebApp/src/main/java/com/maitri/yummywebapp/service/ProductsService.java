@@ -1,16 +1,21 @@
 package com.maitri.yummywebapp.service;
 
-import com.maitri.yummywebapp.dto.CustomerRequest;
-import com.maitri.yummywebapp.dto.ProductsRequest;
+import com.maitri.yummywebapp.dto.*;
+import com.maitri.yummywebapp.dto.CustomerUpdateRequest;
 import com.maitri.yummywebapp.entity.Customer;
 import com.maitri.yummywebapp.entity.Products;
 import com.maitri.yummywebapp.helper.EncryptionService;
 import com.maitri.yummywebapp.mapper.ProductsMapper;
+import com.maitri.yummywebapp.mapper.ProductsUpdateMapper;
 import com.maitri.yummywebapp.repo.ProductsRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
@@ -27,6 +32,7 @@ public class ProductsService {
 
     // To convert dto to entity
     private final ProductsMapper mapper;
+    private final ProductsUpdateMapper updatemapper;
     private final EncryptionService encryptionService;
 
     public Products addProduct(ProductsRequest request) {
@@ -50,6 +56,59 @@ public class ProductsService {
         // return repo.findAll(); // Returns all products
         return repo.findAll();
     }
+
+    public String deleteProduct(Long id) {
+        System.out.println("==================== delete service");
+
+        Optional<Products> existingProductsOpt = repo.findById(id);
+
+        if (existingProductsOpt.isEmpty()) {
+            throw new RuntimeException("Product not found with email: " + id);
+        }
+
+        Products existingProduct = existingProductsOpt.get();
+
+        // deletes entity into database using Repo
+        repo.delete(existingProduct);
+        return "Deleted Successfully.";
+    }
+
+    public Products updateProduct(ProductUpdateRequest request) {
+        System.out.println("==================== update service");
+        // Retrieve the existing customer from the database
+        Optional<Products> existingProductOpt = repo.findById(request.id());
+
+        if (existingProductOpt.isEmpty()) {
+            throw new RuntimeException("Product not found with email: " + request.id());
+        }
+
+        Products existingProduct = existingProductOpt.get();
+
+        // Convert the DTO to an entity using Mapper
+        Products updatedProduct = updatemapper.toEntity(request);
+
+        // Compare each field dynamically and update only the changed fields
+        Field[] fields = Products.class.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object oldValue = field.get(existingProduct);
+                Object newValue = field.get(updatedProduct);
+
+                if (newValue != null && (oldValue == null || !newValue.equals(oldValue))) {
+                    System.out.println(field.getName() + " changed from " + oldValue + " to " + newValue);
+                    field.set(existingProduct, newValue); // Update the field in the existing customer
+                }
+            } catch (IllegalAccessException e) {
+                System.err.println("Error accessing field: " + field.getName());
+            }
+        }
+
+        // Save the updated entity
+        repo.save(existingProduct);
+        return existingProduct;
+    }
+
 
     public List<Products> getTop2ProductsInPriceRange(double minPrice, double maxPrice) {
         Pageable pageable = PageRequest.of(0, 2);
