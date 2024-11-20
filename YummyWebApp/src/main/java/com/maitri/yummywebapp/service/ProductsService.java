@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +52,7 @@ public class ProductsService {
     }
 
     public List<Products> getTop2ProductsInPriceRange(double minPrice, double maxPrice) {
-        return repo.findTop2ProductsInPriceRange(minPrice, maxPrice);
+        Pageable pageable = PageRequest.of(0, 2);
+        return repo.findTop2ProductsInPriceRange(minPrice, maxPrice, pageable);
     }
 }
