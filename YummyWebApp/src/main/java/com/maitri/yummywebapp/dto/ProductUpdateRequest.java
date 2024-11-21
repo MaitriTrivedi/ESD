@@ -9,7 +9,7 @@ public record ProductUpdateRequest (
         String productName,
 
         @JsonProperty("price")
-        float price,
+        Float price,
 
         @JsonProperty("id")
         long id

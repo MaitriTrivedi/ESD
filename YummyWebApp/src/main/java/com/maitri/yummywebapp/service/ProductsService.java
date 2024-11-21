@@ -74,40 +74,33 @@ public class ProductsService {
     }
 
     public Products updateProduct(ProductUpdateRequest request) {
-        System.out.println("==================== update service");
-        // Retrieve the existing customer from the database
+        System.out.println("==================== update service" + request);
+
+        // Retrieve the existing product from the database
         Optional<Products> existingProductOpt = repo.findById(request.id());
 
         if (existingProductOpt.isEmpty()) {
-            throw new RuntimeException("Product not found with email: " + request.id());
+            throw new RuntimeException("Product not found with id: " + request.id());
         }
 
         Products existingProduct = existingProductOpt.get();
 
-        // Convert the DTO to an entity using Mapper
+        // Map the request to a new entity
         Products updatedProduct = updatemapper.toEntity(request);
 
-        // Compare each field dynamically and update only the changed fields
-        Field[] fields = Products.class.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            try {
-                Object oldValue = field.get(existingProduct);
-                Object newValue = field.get(updatedProduct);
-
-                if (newValue != null && (oldValue == null || !newValue.equals(oldValue))) {
-                    System.out.println(field.getName() + " changed from " + oldValue + " to " + newValue);
-                    field.set(existingProduct, newValue); // Update the field in the existing customer
-                }
-            } catch (IllegalAccessException e) {
-                System.err.println("Error accessing field: " + field.getName());
-            }
+        // Update fields only if they are not null
+        if (updatedProduct.getProductName() != null) {
+            existingProduct.setProductName(updatedProduct.getProductName());
+        }
+        if (updatedProduct.getPrice() != null) {
+            existingProduct.setPrice(updatedProduct.getPrice());
         }
 
         // Save the updated entity
         repo.save(existingProduct);
         return existingProduct;
     }
+
 
 
     public List<Products> getTop2ProductsInPriceRange(double minPrice, double maxPrice) {
